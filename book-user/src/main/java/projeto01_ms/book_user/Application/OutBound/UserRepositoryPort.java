@@ -1,4 +1,4 @@
-package projeto01_ms.book_user.Application.InBound;
+package projeto01_ms.book_user.Application.OutBound;
 
 import projeto01_ms.book_user.Application.Entity.User;
 
@@ -8,7 +8,7 @@ public interface UserRepositoryPort {
 
     Optional<User> findBYEmail(String email);
 
-    Boolean existByEmail(String email);
+    Boolean existsByEmail(String email);
 
     User save(User user);
 }

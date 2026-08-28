@@ -6,18 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import projeto01_ms.book_user.Application.InBound.RegisterUserCommand;
 import projeto01_ms.book_user.Application.InBound.RegisterUserUseCase;
 import projeto01_ms.book_user.Application.OutBound.RegisterUserOutPut;
 
-@RestController("/user")
+@RestController
+@RequestMapping("/user")
 public class ControllerUser {
 
-    @Autowired
     private final RegisterUserUseCase registerUserPort;
 
     public ControllerUser(RegisterUserUseCase registerUserPort){

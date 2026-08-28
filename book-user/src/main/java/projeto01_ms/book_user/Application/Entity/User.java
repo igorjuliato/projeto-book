@@ -3,6 +3,9 @@ package projeto01_ms.book_user.Application.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,12 +21,15 @@ import java.util.*;
 //essa ultima anotação o implementes faz parte da auditora jpa, responsavel por gerenciar os registros de
 //mudança de qualquer dado da aplicação
 @EntityListeners(AuditingEntityListener.class)
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 
     //A class não vai ter o construtor geral, pois vou tentar implementar o maps
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @EqualsAndHashCode.Exclude
     private UUID ID;
 
      private String name;
@@ -63,12 +69,10 @@ public class User implements UserDetails {
     }
 
     @Override
-    public @Nullable String getPassword() {
-        return "";
-    }
+    public @Nullable String getPassword() { return this.password;   }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.name;
     }
 }

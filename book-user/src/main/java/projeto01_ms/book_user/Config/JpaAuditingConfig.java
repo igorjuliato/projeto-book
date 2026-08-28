@@ -1,4 +1,4 @@
-package projeto01_ms.book_user.Application.Entity;
+package projeto01_ms.book_user.Config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

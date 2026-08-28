@@ -1,9 +1,8 @@
 package projeto01_ms.book_user.Adapter.OutBound;
 
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.stereotype.Component;
 import projeto01_ms.book_user.Application.Entity.User;
-import projeto01_ms.book_user.Application.InBound.UserRepositoryPort;
+import projeto01_ms.book_user.Application.OutBound.UserRepositoryPort;
 
 import java.util.Optional;
 
@@ -22,9 +21,10 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Boolean existByEmail(String email){
-        return repository.existByEmail(email);
+    public Boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
     }
+
 
     @Override
     public User save(User user){
