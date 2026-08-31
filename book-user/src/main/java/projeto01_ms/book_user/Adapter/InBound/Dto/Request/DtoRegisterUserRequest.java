@@ -1,4 +1,4 @@
-package projeto01_ms.book_user.Adapter.InBound;
+package projeto01_ms.book_user.Adapter.InBound.Dto.Request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

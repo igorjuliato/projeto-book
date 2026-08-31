@@ -1,4 +1,4 @@
-package projeto01_ms.book_user.Adapter.InBound;
+package projeto01_ms.book_user.Adapter.InBound.Dto.Response;
 
 import java.util.UUID;
 

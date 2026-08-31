@@ -1,15 +1,17 @@
 package projeto01_ms.book_user.Adapter.InBound;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoRegisterUserRequest;
+import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoUpdateUserResquest;
+import projeto01_ms.book_user.Adapter.InBound.Dto.Response.DtoRegisterUserResponse;
 import projeto01_ms.book_user.Application.InBound.RegisterUserCommand;
 import projeto01_ms.book_user.Application.InBound.RegisterUserUseCase;
-import projeto01_ms.book_user.Application.OutBound.RegisterUserOutPut;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
@@ -43,7 +45,9 @@ public class ControllerUser {
 
     //Esse endpoint é responsavel por atualizar
     @PutMapping("/uptade/{id}")
-    public ResponseEntity<> UpdateUser(){
+    @PreAuthorize("hasRole('ADMIN') or id == authentication.principal.id")
+    public ResponseEntity<> UpdateUser(@PathVariable UUID id, @RequestBody DtoUpdateUserResquest dto){
+
 
     }
 
@@ -54,4 +58,6 @@ public class ControllerUser {
 
     }
 
+    public static record DtoUpdateUserRequest {
+    }
 }
