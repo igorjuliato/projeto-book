@@ -57,7 +57,4 @@ public class ControllerUser {
     public ResponseEntity<> renewUser(){
 
     }
-
-    public static record DtoUpdateUserRequest {
-    }
 }
