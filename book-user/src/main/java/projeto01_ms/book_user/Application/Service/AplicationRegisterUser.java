@@ -1,21 +1,24 @@
 package projeto01_ms.book_user.Application.Service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import projeto01_ms.book_user.Adapter.OutBound.UserRepositoryAdapter;
+import projeto01_ms.book_user.Application.Entity.ROLE;
 import projeto01_ms.book_user.Application.Entity.User;
 import projeto01_ms.book_user.Application.InBound.RegisterUserCommand;
 import projeto01_ms.book_user.Application.InBound.RegisterUserUseCase;
 import projeto01_ms.book_user.Application.OutBound.RegisterUserOutPut;
+import projeto01_ms.book_user.Application.OutBound.UserRepositoryPort;
 import projeto01_ms.book_user.Domain.EmailAlreadyExistExceptions;
 
 @Service
-public class AplicationRegisterUser implements RegisterUserUseCase  {
+public class AplicationRegisterUser implements RegisterUserUseCase {
 
-    private final UserRepositoryAdapter userRepository;
+    private final UserRepositoryPort userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-
-    public AplicationRegisterUser(UserRepositoryAdapter userRepository) {
+    public AplicationRegisterUser(UserRepositoryPort userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -23,17 +26,16 @@ public class AplicationRegisterUser implements RegisterUserUseCase  {
         if (userRepository.existsByEmail(command.email())) {
             throw new EmailAlreadyExistExceptions(command.email());
         }
+
         User user = new User(
                 command.name(),
                 command.email(),
-                command.password()
+                passwordEncoder.encode(command.password())
         );
+        user.getRoles().add(ROLE.BUYER);
 
-        User saveUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return new RegisterUserOutPut(
-                saveUser.getID(),
-                saveUser.getEmail()
-        );
+        return new RegisterUserOutPut(savedUser.getID(), savedUser.getEmail());
     }
 }

@@ -3,58 +3,94 @@ package projeto01_ms.book_user.Adapter.InBound;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoRegisterUserRequest;
-import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoUpdateUserResquest;
+import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoUpdateUserRequest;
 import projeto01_ms.book_user.Adapter.InBound.Dto.Response.DtoRegisterUserResponse;
+import projeto01_ms.book_user.Adapter.InBound.Dto.Response.DtoUserResponse;
+import projeto01_ms.book_user.Application.InBound.DeleteUserUseCase;
+import projeto01_ms.book_user.Application.InBound.FindUserUseCase;
+import projeto01_ms.book_user.Application.InBound.ListUsersUseCase;
 import projeto01_ms.book_user.Application.InBound.RegisterUserCommand;
 import projeto01_ms.book_user.Application.InBound.RegisterUserUseCase;
+import projeto01_ms.book_user.Application.InBound.UpdateUserCommand;
+import projeto01_ms.book_user.Application.InBound.UpdateUserUseCase;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
 public class ControllerUser {
 
-    private final RegisterUserUseCase registerUserPort;
+    private final RegisterUserUseCase registerUserUseCase;
+    private final FindUserUseCase findUserUseCase;
+    private final ListUsersUseCase listUsersUseCase;
+    private final UpdateUserUseCase updateUserUseCase;
+    private final DeleteUserUseCase deleteUserUseCase;
 
-    public ControllerUser(RegisterUserUseCase registerUserPort){
-        this.registerUserPort = registerUserPort;
+    public ControllerUser(
+            RegisterUserUseCase registerUserUseCase,
+            FindUserUseCase findUserUseCase,
+            ListUsersUseCase listUsersUseCase,
+            UpdateUserUseCase updateUserUseCase,
+            DeleteUserUseCase deleteUserUseCase
+    ) {
+        this.registerUserUseCase = registerUserUseCase;
+        this.findUserUseCase = findUserUseCase;
+        this.listUsersUseCase = listUsersUseCase;
+        this.updateUserUseCase = updateUserUseCase;
+        this.deleteUserUseCase = deleteUserUseCase;
     }
 
-    //Esse endpoint é responsavel por cadastrar e definir status inicial do usuario(role)
     @PostMapping("/register")
-    public ResponseEntity<DtoRegisterUserResponse> RegisterUser(@RequestBody @Valid DtoRegisterUserRequest dto){
+    public ResponseEntity<DtoRegisterUserResponse> registerUser(
+            @RequestBody @Valid DtoRegisterUserRequest dto
+    ) {
+        var command = new RegisterUserCommand(dto.nome(), dto.email(), dto.password());
+        var output = registerUserUseCase.execute(command);
+        var response = new DtoRegisterUserResponse(output.userId(), output.email());
 
-        var command = new RegisterUserCommand(dto.nome(),dto.Email(),dto.password());
-
-        var OutPut = registerUserPort.execute(command);
-
-        var Response = new DtoRegisterUserResponse(OutPut.userId(), OutPut.email());
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(Response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    //Validar senha do usuario no registro e autenticar o usuario
-    @PostMapping()
-    public ResponseEntity<> AuthenticateUser(){
+    @GetMapping
+    public ResponseEntity<List<DtoUserResponse>> listUsers() {
+        var response = listUsersUseCase.execute().stream()
+                .map(this::toResponse)
+                .toList();
 
+        return ResponseEntity.ok(response);
     }
 
-
-    //Esse endpoint é responsavel por atualizar
-    @PutMapping("/uptade/{id}")
-    @PreAuthorize("hasRole('ADMIN') or id == authentication.principal.id")
-    public ResponseEntity<> UpdateUser(@PathVariable UUID id, @RequestBody DtoUpdateUserResquest dto){
-
-
+    @GetMapping("/{id}")
+    public ResponseEntity<DtoUserResponse> findUser(@PathVariable UUID id) {
+        return ResponseEntity.ok(toResponse(findUserUseCase.execute(id)));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<DtoUserResponse> updateUser(
+            @PathVariable UUID id,
+            @RequestBody @Valid DtoUpdateUserRequest dto
+    ) {
+        var command = new UpdateUserCommand(id, dto.name(), dto.email(), dto.password());
+        return ResponseEntity.ok(toResponse(updateUserUseCase.execute(command)));
+    }
 
-    //Esse endpoint é responsavel por desativar o usuario
-    @PostMapping("/renew")
-    public ResponseEntity<> renewUser(){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+        deleteUserUseCase.execute(id);
+        return ResponseEntity.noContent().build();
+    }
 
+    private DtoUserResponse toResponse(projeto01_ms.book_user.Application.OutBound.UserOutPut output) {
+        return new DtoUserResponse(
+                output.userId(),
+                output.name(),
+                output.email(),
+                output.roles(),
+                output.createdAt(),
+                output.updatedAt()
+        );
     }
 }
