@@ -1,0 +1,18 @@
+package projeto01_ms.book_user.Adapter.InBound.Dto.Request;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record DtoRegisterUserRequest(
+        @NotBlank
+        String nome,
+        @Email
+        @NotBlank
+        String email,
+        @NotBlank
+        @Size(min = 8)
+        String password
+){
+
+}
