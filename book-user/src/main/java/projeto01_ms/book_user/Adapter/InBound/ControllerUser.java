@@ -54,7 +54,7 @@ public class ControllerUser {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping("/listUser")
     public ResponseEntity<List<DtoUserResponse>> listUsers() {
         var response = listUsersUseCase.execute().stream()
                 .map(this::toResponse)
@@ -63,12 +63,12 @@ public class ControllerUser {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/findUser")
     public ResponseEntity<DtoUserResponse> findUser(@PathVariable UUID id) {
         return ResponseEntity.ok(toResponse(findUserUseCase.execute(id)));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/fragile/upadate")
     public ResponseEntity<DtoUserResponse> updateUser(
             @PathVariable UUID id,
             @RequestBody @Valid DtoUpdateUserRequest dto
@@ -77,7 +77,7 @@ public class ControllerUser {
         return ResponseEntity.ok(toResponse(updateUserUseCase.execute(command)));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/fragile/delete")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         deleteUserUseCase.execute(id);
         return ResponseEntity.noContent().build();

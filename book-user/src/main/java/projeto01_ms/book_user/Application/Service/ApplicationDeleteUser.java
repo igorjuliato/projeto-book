@@ -1,5 +1,6 @@
 package projeto01_ms.book_user.Application.Service;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import projeto01_ms.book_user.Application.InBound.DeleteUserUseCase;
 import projeto01_ms.book_user.Application.OutBound.UserRepositoryPort;
@@ -19,7 +20,7 @@ public class ApplicationDeleteUser implements DeleteUserUseCase {
     @Override
     public void execute(UUID id) {
         if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException(id);
+            throw new UsernameNotFoundException("The user not found, trying again");
         }
 
         userRepository.deleteById(id);
