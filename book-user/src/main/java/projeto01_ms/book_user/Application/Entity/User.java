@@ -56,6 +56,8 @@ public class User implements UserDetails {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    public UUID getid(){return ID;}
+
     protected User() {
     }
 

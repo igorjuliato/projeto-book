@@ -3,6 +3,7 @@ package projeto01_ms.book_user.Adapter.InBound;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoRegisterUserRequest;
 import projeto01_ms.book_user.Adapter.InBound.Dto.Request.DtoUpdateUserRequest;
@@ -69,6 +70,7 @@ public class ControllerUser {
     }
 
     @PutMapping("/{id}/fragile/upadate")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<DtoUserResponse> updateUser(
             @PathVariable UUID id,
             @RequestBody @Valid DtoUpdateUserRequest dto
@@ -78,6 +80,7 @@ public class ControllerUser {
     }
 
     @DeleteMapping("/{id}/fragile/delete")
+    @PreAuthorize("#id == authentication.principal.id")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         deleteUserUseCase.execute(id);
         return ResponseEntity.noContent().build();
